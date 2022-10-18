@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+application {
+    mainClassName = 'agh.ics.oop.World'
+}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.testng:testng:7.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:7.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:7.1.0'
+
+}
+
+test {
+    useJUnitPlatform()
+}
