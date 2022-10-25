@@ -1,8 +1,9 @@
 package agh.ics.oop;
 
-import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Vector2dTest {
     @Test
