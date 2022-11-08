@@ -4,8 +4,8 @@ import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 
 public class Vector2d {
-    final int x;
-    final int y;
+    public final int x;
+    public final int y;
     public Vector2d(int x,int y) {
         this.y = y;
         this.x = x;
@@ -29,6 +29,7 @@ public class Vector2d {
     public Vector2d subtract( Vector2d other) {
         return new Vector2d(this.x-other.x,this.y-other.y);
     }
+    @Override
     public boolean equals(Object other){
         if (other.getClass() == getClass()){
             return ((Vector2d) other).x == this.x && ((Vector2d) other).y == this.y;
