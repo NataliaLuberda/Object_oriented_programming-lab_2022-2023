@@ -8,16 +8,13 @@ public class GrassField extends AbstractWorldMap implements IWorldMap{
 
     public GrassField(int grassSample){
         this.grassSample = grassSample;
-        this.grassSampleList = new ArrayList<Grass>();
-        this.animals = new ArrayList<Animal>();
         this.downLeft = new Vector2d(0, 0);
-        this.uppRight = new Vector2d((int)Math.sqrt(grassSample*10), (int)Math.sqrt(grassSample*10));
+        this.uppRight = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
         int currentGrass = 0;
         while (currentGrass < grassSample) {
             putGrass();
             currentGrass++;
         }
-        updateBounds();
     }
 
     public void putGrass(){

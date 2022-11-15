@@ -6,10 +6,12 @@ import java.util.List;
 public abstract class AbstractWorldMap implements IWorldMap {
     protected List<Animal> animals = new ArrayList<>();
     protected List<Grass> grassSampleList = new ArrayList<>();
-
     protected Vector2d downLeft;
-
     protected Vector2d uppRight;
+
+    protected Vector2d getDownLeft = new Vector2d(Integer.MAX_VALUE,Integer.MAX_VALUE);
+    protected Vector2d getUppRight = new Vector2d(0,0);
+
     abstract public boolean canMoveTo(Vector2d position);
     @Override
     public boolean isOccupied(Vector2d position) {
@@ -31,15 +33,15 @@ public abstract class AbstractWorldMap implements IWorldMap {
         if (this.animals.size() != 0)
             for (Animal animal : this.animals)
             {
-                this.downLeft= this.downLeft.lowerLeft(animal.getPosition());
-                this.uppRight = this.uppRight.upperRight(animal.getPosition());
+                this.getDownLeft= this.getDownLeft.lowerLeft(animal.getPosition());
+                this.getUppRight = this.getUppRight.upperRight(animal.getPosition());
             }
 
         if (this.grassSampleList.size() != 0)
             for(Grass grass: this.grassSampleList)
             {
-                this.downLeft = this.downLeft.lowerLeft(grass.getPosition());
-                this.uppRight = this.uppRight.upperRight(grass.getPosition());
+                this.getDownLeft= this.getDownLeft.lowerLeft(grass.getPosition());
+                this.getUppRight = this.getUppRight.upperRight(grass.getPosition());
             }
     }
 
@@ -62,7 +64,7 @@ public abstract class AbstractWorldMap implements IWorldMap {
     public String toString() {
         MapVisualiser map = new MapVisualiser(this);
         updateBounds();
-        return map.draw(downLeft, uppRight);
+        return map.draw(this.getDownLeft,this.getUppRight);
     }
 }
 

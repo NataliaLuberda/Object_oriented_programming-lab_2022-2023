@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RectangularTest {
     @Test
     void placeAnimalTest(){//testuje metodę place
-        RectangularMap map= new RectangularMap();
+        RectangularMap map= new RectangularMap(10,10);
         Vector2d pos=new Vector2d(2,2);
         Animal animal = new Animal(map,pos);
         assertTrue(map.place(animal));
@@ -16,7 +16,7 @@ public class RectangularTest {
     }
     @Test
     void AtAnimalTest(){ //testuje metodę objectAt
-        RectangularMap map= new RectangularMap();
+        RectangularMap map= new RectangularMap(10,10);
         Vector2d pos=new Vector2d(2,2);
         Animal animal = new Animal(map,pos);
         map.place(animal);
@@ -24,7 +24,7 @@ public class RectangularTest {
     }
     @Test
     void isOccupiedAnimal(){ //testuje metodę isOccupied
-        RectangularMap map= new RectangularMap();
+        RectangularMap map= new RectangularMap(10,10);
         Vector2d positione=new Vector2d(2,2);
         Animal animal = new Animal(map,positione);
         map.place(animal);
@@ -32,7 +32,7 @@ public class RectangularTest {
     }
     @Test
     void canMoveToAnimal(){ //testuje metodę canMoveTo
-        RectangularMap map= new RectangularMap();
+        RectangularMap map= new RectangularMap(10,10);
         Vector2d pos=new Vector2d(2,2);
         Animal animal = new Animal(map,pos);
         map.place(animal);
