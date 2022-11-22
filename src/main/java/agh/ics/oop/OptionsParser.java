@@ -22,7 +22,7 @@ public class OptionsParser{
                 case "b","backward" -> newTab[tmp] = MoveDirection.BACKWARD;
                 case "r","right" -> newTab[tmp] = MoveDirection.RIGHT;
                 case "l","left" -> newTab[tmp] = MoveDirection.LEFT;
-                default -> tmp--;
+                default -> throw new IllegalArgumentException(s[tmp] + " is not legal move specification");
             };
             j++;
             tmp++;

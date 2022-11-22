@@ -1,9 +1,22 @@
 package agh.ics.oop;
 
+import java.util.HashMap;
+import java.util.Set;
+
 public class World{
     public static void main(String[] args) {
-        GrassField park = new GrassField(10);
-        System.out.println(park);
+        try {
+            String[] argse = { "f", "l", "r", "f" };
+            MoveDirection[] directions = new OptionsParser().parse(argse);
+            IWorldMap map = new RectangularMap(5, 5);
+            Vector2d[] positions = { new Vector2d(1,1), new Vector2d(1, 1)};
+            IEngine engine = new SimulationEngine(directions, map, positions);
+            engine.run();
+            System.out.println(map);
+        }catch (IllegalArgumentException ex){
+            ex.printStackTrace();
+            System.exit(0);
+        }
     }
     static Direction[] changer(String[] arr){
         Direction[] directions = new Direction[arr.length];

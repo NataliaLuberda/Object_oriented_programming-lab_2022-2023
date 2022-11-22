@@ -1,5 +1,7 @@
 package agh.ics.oop;
 
+import java.util.Objects;
+
 import static java.lang.Integer.max;
 import static java.lang.Integer.min;
 
@@ -31,10 +33,15 @@ public class Vector2d {
     }
     @Override
     public boolean equals(Object other){
-        if (other.getClass() == getClass()){
+        if (other instanceof Vector2d){
             return ((Vector2d) other).x == this.x && ((Vector2d) other).y == this.y;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.x, this.y);
     }
     public Vector2d opposite(){
         return new Vector2d(-this.x,-this.y);

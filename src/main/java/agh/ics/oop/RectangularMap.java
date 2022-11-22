@@ -4,12 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RectangularMap extends AbstractWorldMap implements IWorldMap {
+public class RectangularMap extends AbstractWorldMap implements IWorldMap,IPositionChangeObserver {
 
+    private final Vector2d downLeft;
+    private final Vector2d uppRight;
 
     public RectangularMap(int width, int height) {
         this.downLeft = new Vector2d(0, 0);
         this.uppRight = new Vector2d(width - 1, height - 1);
+    }
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        if (this.canMoveTo(newPosition)){
+            Animal puszek = animals.get(oldPosition);
+            this.animals.remove(oldPosition);
+            this.animals.put(newPosition,puszek);
+        }
+
+    }
+    @Override
+    protected Vector2d getDownLeft() {
+        return downLeft;
+    }
+
+    @Override
+    protected Vector2d getUppRight() {
+        return uppRight;
     }
 
     @Override
@@ -19,11 +39,16 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean place(Animal animal) {
-        if (!isOccupied(animal.getPosition())) {
-            this.animals.add(animal);
+        if (this.canMoveTo(animal.getPosition())) {
+            this.animals.put(animal.getPosition(),animal);
             return true;
+        }else {
+            throw new IllegalArgumentException(animal.getPosition() + " is not available position");
         }
-        return false;
+    }
+
+    @Override
+    public Object objectAt(Vector2d position) {
+        return this.animals.get(position);
     }
 }
-
