@@ -1,7 +1,6 @@
 package agh.ics.oop;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
 public class RectangularMap extends AbstractWorldMap implements IWorldMap,IPositionChangeObserver {
@@ -16,20 +15,25 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap,IPosit
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         if (this.canMoveTo(newPosition)){
-            Animal puszek = animals.get(oldPosition);
+            IMapElement puszek = animals.get(oldPosition);
             this.animals.remove(oldPosition);
             this.animals.put(newPosition,puszek);
         }
 
     }
     @Override
-    protected Vector2d getDownLeft() {
+    public Vector2d getDownLeft() {
         return downLeft;
     }
 
     @Override
-    protected Vector2d getUppRight() {
+    public Vector2d getUppRight() {
         return uppRight;
+    }
+
+    @Override
+    public HashMap<Vector2d, IMapElement> getGrass() {
+        return null;
     }
 
     @Override
@@ -41,6 +45,7 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap,IPosit
     public boolean place(Animal animal) {
         if (this.canMoveTo(animal.getPosition())) {
             this.animals.put(animal.getPosition(),animal);
+            animal.addObserver(this);
             return true;
         }else {
             throw new IllegalArgumentException(animal.getPosition() + " is not available position");

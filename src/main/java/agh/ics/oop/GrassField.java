@@ -6,10 +6,15 @@ import java.util.*;
 import java.util.Random;
 import java.lang.Math;
 public class GrassField extends AbstractWorldMap implements IWorldMap,IPositionChangeObserver{
+
     final int grassSample;
-    private final HashMap<Vector2d, Grass> grassSampleList = new HashMap<>();;
+    private final HashMap<Vector2d, IMapElement> grassSampleList = new HashMap<>();;
     private final ArrayList<Vector2d> positionsOnTheField = new ArrayList<>();//wolne miejsca na mapie
-    public GrassField(int grassSample){
+    private final MapBoundary listMap;
+
+
+    public GrassField(int grassSample){//konstruktor
+        this.listMap = new MapBoundary();
         this.grassSample = grassSample;
         for (int i = 0; i <= ((int) Math.sqrt(10 * grassSample)); i++){
             for (int j = 0; j <= ((int) Math.sqrt(10 * grassSample)); j++){
@@ -19,49 +24,31 @@ public class GrassField extends AbstractWorldMap implements IWorldMap,IPositionC
         putGrass(positionsOnTheField);//metoda dodawania  kępków trawy
     }
 
-    public void putGrass(ArrayList<Vector2d> positionsOnTheField){
+    public void putGrass(ArrayList<Vector2d> positionsOnTheField){//położenie trawy w losowych miejscach
         Random randomSamplePlace = new Random();
         int currentGrass = 0;
         do {
             int random =  randomSamplePlace.nextInt(positionsOnTheField.size()-1);//losuje indeks
             Vector2d grassPlace = positionsOnTheField.get(random);//wolne randomowe miejsce w zakresie tablicy
             this.grassSampleList.put(grassPlace,new Grass(grassPlace));//dodaje twrawe do hashmapy
+            this.listMap.addEl(grassPlace);
             positionsOnTheField.remove(grassPlace);//usuwam zajęte miejsce
             currentGrass++;
         } while (currentGrass<this.grassSample);
     }
 
+    public HashMap<Vector2d, IMapElement> getGrass(){
+        return grassSampleList;//zwaracanie listy traw
+    };
 
     @Override
-    protected Vector2d getDownLeft() {
-        Vector2d downLeft = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
-        if (this.animals.size() != 0) {
-            for (Vector2d position : animals.keySet()) {
-                downLeft = downLeft.lowerLeft(position);
-            }
-        }
-        if (this.grassSampleList.size() != 0) {
-            for (Vector2d position : grassSampleList.keySet()) {
-                downLeft = downLeft.lowerLeft(position);
-            }
-        }
-        return downLeft;
+    public Vector2d getDownLeft() {
+        return this.listMap.downLeft();
     }
 
     @Override
-    protected Vector2d getUppRight() {
-        Vector2d uppRight = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
-        if (this.animals.size() != 0) {
-            for (Vector2d position : animals.keySet()) {
-                uppRight = uppRight.upperRight(position);
-            }
-        }
-        if (this.grassSampleList.size() != 0) {
-            for (Vector2d position : grassSampleList.keySet()) {
-                uppRight = uppRight.upperRight(position);
-            }
-        }
-        return uppRight;
+    public Vector2d getUppRight() {
+        return this.listMap.uppRight();
     }
 
     @Override
@@ -70,14 +57,17 @@ public class GrassField extends AbstractWorldMap implements IWorldMap,IPositionC
         return !(object instanceof Animal);//mogę się ruszyć jeśli nie jest zwierzakiem
     }
     @Override
-    public boolean place(Animal animal) {
+    public boolean place(Animal animal) {//kwestia położenia na mapie zwierzęcia
         if (!isOccupied(animal.getPosition())) {//jeżeli nie zajęte to kładę
             this.animals.put(animal.getPosition(),animal);
+            this.listMap.addEl(animal.getPosition());
+            animal.addObserver(this);
             positionsOnTheField.remove(animal.getPosition());//usuwam zajęte miejsce
             return true;
         } else {
             if (moveAnimalOnGrass(animal.getPosition())){//zwierzak zjada trawe a ta rośnie gdzie indziej
                 this.animals.put(animal.getPosition(),animal);//jeżeli tam była trawa to zwierzak ją zjadł i zostaje na jej miejscu
+                animal.addObserver(this);
                 return true;
             }
         }
@@ -100,9 +90,10 @@ public class GrassField extends AbstractWorldMap implements IWorldMap,IPositionC
             Random randomSamplePlace = new Random();//losuje nowe miejsce dla trawy
             int random =  randomSamplePlace.nextInt(positionsOnTheField.size());
             Vector2d grassPlace = positionsOnTheField.get(random);
-            this.grassSampleList.put(grassPlace,new Grass(grassPlace));//nowe miejsce dla trawy
-            positionsOnTheField.remove(grassPlace);//usuwam je z dostępnych miejsc
             this.grassSampleList.remove(((Grass) ob).getPosition());//usuwam poprzednią pozycję i trawę
+            this.grassSampleList.put(grassPlace,new Grass(grassPlace));//nowe miejsce dla trawy
+            this.listMap.addEl(grassPlace);
+            positionsOnTheField.remove(grassPlace);//usuwam je z dostępnych miejsc
             return true;
         }
         return false;
@@ -112,19 +103,20 @@ public class GrassField extends AbstractWorldMap implements IWorldMap,IPositionC
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
         if (canMoveTo(newPosition)){
             if(objectAt(newPosition) == null){//jeżeli niczego tam nie ma
-                Animal puszek = animals.get(oldPosition);
+                IMapElement puszek = animals.get(oldPosition);
                 this.animals.remove(oldPosition);
                 this.animals.put(newPosition,puszek);//dodaje  zwierze na innej pozycji
+                this.listMap.positionChanged(oldPosition,newPosition);
                 positionsOnTheField.add(oldPosition);//starą dodaje do dostepnych
                 positionsOnTheField.remove(newPosition);//nową odejmuje z dostępnych miejs
             }
             else {//jeżeli tam jest trawa
-                Animal puszek = animals.get(oldPosition);
+                IMapElement puszek = animals.get(oldPosition);
                 this.animals.remove(oldPosition);
-                this.animals.put(newPosition,puszek);
                 positionsOnTheField.add(oldPosition);//dodaje starą pozycje
+                this.listMap.removeEl(oldPosition);//nowej nie dodaje bo jest gdyż była na niej trawa
                 moveAnimalOnGrass(newPosition);//zmieniam pozycje zjedzonej trawy
-
+                this.animals.put(newPosition,puszek);
             }
         }
 

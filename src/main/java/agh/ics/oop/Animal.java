@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 import java.util.*;
 
-public class Animal {
+public class Animal implements IMapElement{
 
     private IWorldMap map;
     private MapDirection orientation;
@@ -19,7 +19,6 @@ public class Animal {
         this.position = initialPosition;
         this.observerList = new ArrayList<>();
         this.orientation = MapDirection.NORTH;
-        this.observerList.add((IPositionChangeObserver) map);
     }
 
     public boolean isAt(Vector2d position){
@@ -46,14 +45,14 @@ public class Animal {
             case FORWARD -> {
                 Vector2d currentPosition = this.position.add(this.orientation.toUnitVector());
                 if (this.map.canMoveTo(currentPosition)) {
-                    positionChanged(position,currentPosition);
+                    this.positionChanged(this.position,currentPosition);
                     this.position = currentPosition;
                 }
             }
             case BACKWARD -> {
                 Vector2d currentPosition = this.position.subtract(this.orientation.toUnitVector());
                 if (this.map.canMoveTo(currentPosition)) {
-                    positionChanged(position,currentPosition);
+                    this.positionChanged(this.position,currentPosition);
                     this.position = currentPosition;
                 }
             }
