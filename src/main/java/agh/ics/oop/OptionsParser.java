@@ -1,7 +1,7 @@
 package agh.ics.oop;
 
 public class OptionsParser{
-    public static MoveDirection[] parse(String[] args) {
+    public static MoveDirection[] parse(String[] args) throws IllegalArgumentException{
 
         int size = args.length;
         int idx = 0;
